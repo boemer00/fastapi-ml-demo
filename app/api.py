@@ -15,6 +15,20 @@ class IrisFeatures(BaseModel):
     petal_length: float
     petal_width: float
 
+    # Fix v2 compatibility by adding model_config
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "sepal_length": 5.1,
+                    "sepal_width": 3.5,
+                    "petal_length": 1.4,
+                    "petal_width": 0.2
+                }
+            ]
+        }
+    }
+
 # Train model on startup if needed
 @app.on_event("startup")
 async def startup_event():
