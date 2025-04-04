@@ -18,9 +18,3 @@ def predict_iris(input_data, model_file: str):
     iris = load_iris()
     target_names = iris.target_names
     return target_names[prediction[0]]
-
-# if __name__ == "__main__":
-#     train_model("iris_model.joblib")
-#     input_data = [[5.1, 3.5, 1.4, 0.2]]
-#     prediction = predict_iris(input_data, "iris_model.joblib")
-#     print(f"Prediction: {prediction}")

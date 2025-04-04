@@ -1,12 +1,36 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import numpy as np
 import os
+from dotenv import load_dotenv
+from config import settings
 
 from model import train_model, predict_iris
 
-# Create the FastAPI app instance
-app = FastAPI(title="Iris Classifier API")
+# Load environment variables
+load_dotenv()
+
+# Get environment variables
+MODEL_FILE = settings.MODEL_FILE
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Load the model
+    if ENVIRONMENT == "production":
+        # In production, always train a new model
+        train_model(MODEL_FILE)
+    else:
+        # In development, only train if model doesn't exist
+        if not os.path.exists(MODEL_FILE):
+            train_model(MODEL_FILE)
+    yield
+    # Shutdown: Clean up if needed
+    pass
+
+# Create the FastAPI app instance with lifespan
+app = FastAPI(title="Iris Classifier API", lifespan=lifespan)
 
 # Define a Pydantic model for the request body
 class IrisFeatures(BaseModel):
@@ -14,13 +38,6 @@ class IrisFeatures(BaseModel):
     sepal_width: float
     petal_length: float
     petal_width: float
-
-# Define the model file name
-MODEL_FILE = "iris_model.joblib"
-
-# Train and save the model if it doesn't exist
-if not os.path.exists(MODEL_FILE):
-    train_model(MODEL_FILE)
 
 @app.get("/")
 def read_root():
