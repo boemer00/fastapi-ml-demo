@@ -25,8 +25,9 @@ jobs:
 
     - name: Run tests and coverage
       run: |
-        python -m pip install -e .
-        PYTHONPATH=$PYTHONPATH:$(pwd) pytest --cov=./ --cov-report=xml
+        pytest --cov=./ --cov-report=xml
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
