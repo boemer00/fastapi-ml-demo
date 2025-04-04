@@ -2,17 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import numpy as np
 import os
-from dotenv import load_dotenv
-from config import settings
-
-from model import train_model, predict_iris
-
-# Load environment variables
-load_dotenv()
-
-# Get environment variables
-MODEL_FILE = settings.MODEL_FILE
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+from app.config import settings
+from app.model import train_model, predict_iris
 
 # Create the FastAPI app instance
 app = FastAPI(title="Iris Classifier API")
@@ -24,9 +15,12 @@ class IrisFeatures(BaseModel):
     petal_length: float
     petal_width: float
 
-# Train and save the model if it doesn't exist
-if not os.path.exists(MODEL_FILE):
-    train_model(MODEL_FILE)
+# Train model on startup if needed
+@app.on_event("startup")
+async def startup_event():
+    model_path = os.path.join(settings.MODEL_DIR, settings.MODEL_FILENAME)
+    if not os.path.exists(model_path):
+        train_model(model_path)
 
 @app.get("/")
 def read_root():
@@ -38,7 +32,8 @@ def predict(features: IrisFeatures):
     input_data = np.array([[features.sepal_length, features.sepal_width,
                              features.petal_length, features.petal_width]])
     try:
-        prediction = predict_iris(input_data, MODEL_FILE)
+        model_path = os.path.join(settings.MODEL_DIR, settings.MODEL_FILENAME)
+        prediction = predict_iris(input_data, model_path)
         return {"prediction": prediction}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
