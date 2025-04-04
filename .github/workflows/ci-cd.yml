@@ -24,6 +24,9 @@ jobs:
         pip install pytest pytest-cov
 
     - name: Run tests and coverage
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+        ENVIRONMENT: "testing"
       run: |
         PYTHONPATH=. pytest --cov=./ --cov-report=xml
 
@@ -31,6 +34,7 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: true
 
   deploy:
