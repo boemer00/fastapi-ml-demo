@@ -1,7 +1,4 @@
 import streamlit as st
-import pickle
-import os
-from pathlib import Path
 
 # Set page title and favicon
 st.set_page_config(
@@ -10,35 +7,11 @@ st.set_page_config(
     layout="centered"
 )
 
-# Function to load or create the model
-def get_model():
-    model_path = "iris_model.joblib"
-
-    # If model doesn't exist, create it
-    if not os.path.exists(model_path):
-        # Define a simple set of rules for iris classification
-        simple_model = {
-            'type': 'rules',
-            'rules': {
-                'setosa': {'petal_length_max': 2.5},
-                'versicolor': {'petal_length_min': 2.5, 'petal_length_max': 4.9},
-                'virginica': {'petal_length_min': 4.9}
-            }
-        }
-
-        # Save the model
-        with open(model_path, 'wb') as f:
-            pickle.dump(simple_model, f)
-
-    # Load the model
-    with open(model_path, 'rb') as f:
-        return pickle.load(f)
-
-# Function to make predictions
+# Function to make predictions based on rules
 def predict_iris(features):
-    model = get_model()
-    petal_length = features[2]
+    petal_length = features[2]  # Petal length is the 3rd feature (index 2)
 
+    # Apply the classification rules
     if petal_length < 2.5:
         return 'setosa'
     elif petal_length < 4.9:
@@ -104,5 +77,17 @@ with st.expander("About this App"):
     - Versicolor: Petal length between 2.5 and 4.9 cm
     - Virginica: Petal length > 4.9 cm
 
-    For a more complex model, we could use machine learning algorithms like Random Forest.
+    This is a simplified rule-based model. For more complex scenarios,
+    machine learning algorithms like Random Forest would provide better accuracy.
     """)
+
+# Display current measurements
+st.sidebar.subheader("Current Measurements")
+st.sidebar.write(f"Sepal Length: {sepal_length} cm")
+st.sidebar.write(f"Sepal Width: {sepal_width} cm")
+st.sidebar.write(f"Petal Length: {petal_length} cm")
+st.sidebar.write(f"Petal Width: {petal_width} cm")
+
+# Add footer
+st.sidebar.markdown("---")
+st.sidebar.caption("FastAPI ML Demo - Iris Classifier")
