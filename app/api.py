@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import numpy as np
 import os
 from contextlib import asynccontextmanager
 from app.config import settings
@@ -32,12 +31,17 @@ def read_root():
 
 @app.post("/predict")
 def predict(features: IrisFeatures):
-    # Convert the request data to a numpy array
-    input_data = np.array([[features.sepal_length, features.sepal_width,
-                             features.petal_length, features.petal_width]])
     try:
+        # Convert to simple list instead of numpy array
+        input_data = [[
+            features.sepal_length,
+            features.sepal_width,
+            features.petal_length,
+            features.petal_width
+        ]]
+
         model_path = os.path.join(settings.MODEL_DIR, settings.MODEL_FILENAME)
-        # Train the model if it doesn't exist (e.g., during tests)
+        # Train the model if it doesn't exist
         if not os.path.exists(model_path):
             train_model(model_path)
 

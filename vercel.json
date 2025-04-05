@@ -2,11 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "app/api.py",
+      "src": "main.py",
       "use": "@vercel/python",
       "config": {
-        "runtime": "python3.12",
-        "pythonVersion": "3.12",
+        "runtime": "python3.11",
+        "pythonVersion": "3.11",
         "installCommand": "pip install --no-cache-dir -r requirements-prod.txt"
       }
     }
@@ -14,7 +14,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "app/api.py"
+      "dest": "main.py"
     }
   ],
   "env": {
