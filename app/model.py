@@ -6,7 +6,7 @@ def train_model(model_file: str):
     # Load iris data and train a RandomForest classifier
     iris = load_iris()
     X, y = iris.data, iris.target
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = RandomForestClassifier(n_estimators=50, random_state=42)
     model.fit(X, y)
     joblib.dump(model, model_file)
     print(f"Model trained and saved to {model_file}")

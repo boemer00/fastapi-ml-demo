@@ -71,8 +71,8 @@ venv.bak/
 # Log files
 *.log
 
-# Model files (if they're auto-generated and you don't need to version them)
-*.joblib
+# # Model files (if they're auto-generated and you don't need to version them)
+# *.joblib
 
 # OS-specific files
 .DS_Store
